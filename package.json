@@ -1,0 +1,19 @@
+{
+  "name": "askiez",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/koozy0/askiez.git",
+  "author": "koozy <koozhengyu@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.10",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.12.3"
+  },
+  "scripts": {
+    "start": "nodemon index"
+  }
+}

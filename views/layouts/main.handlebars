@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Askiez</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  </head>
+  <body>
+      <nav class="navbar">
+        <div class="container">
+          <div class="navbar-tabs">
+            <div class="navbar-item is-tab">
+              <a class="navbar-item" href="/">Home</a>
+            </div>
+          <div class="navbar-item is-tab">
+            <a class="navbar-item" href="/new">New Thread</a>
+          </div>
+        </div>
+          <div class="navbar-end">
+            <a class="navbar-item" href="/login">Login</a>
+          </div>
+        </div>
+      </nav>
+
+    <section class="hero is-light">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">{{ title }}</h1>
+          <h2 class="subtitle">{{ subtitle }}</h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        {{{ body }}}
+      </div>
+    </section>
+
+  </body>
+</html>
