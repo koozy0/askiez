@@ -42,6 +42,38 @@ app.get('/', (req, res) => {
 })
 /* ---------- end of / ---------- */
 
+/* ---------- start of /thread ---------- */
+// GET
+app.get('/thread/:id', (req, res) => {
+  let threadIndex = req.params.id
+  Thread.findById(threadIndex, (err, data) => {
+    var context = {
+      title: data.title,
+      subtitle: data.description,
+      username: data.creator,
+      threads: data
+    }
+    res.render('thread', context)
+  })
+})
+// POST
+app.post('/thread/:id', (req, res) => {
+  let threadIndex = req.params.id
+  var newAnswer = {
+    answer: req.body.answer
+  }
+  Thread.findById(threadIndex, (err, thread) => {
+    thread.answer.push(newAnswer)
+    thread.save((thread) => {
+      var context = {
+        thread: thread
+      }
+      res.render('thread', context)
+    })
+  })
+})
+/* ---------- end of /thread ---------- */
+
 /* ---------- start of /new ---------- */
 // GET
 app.get('/new', (req, res) => {
@@ -57,13 +89,15 @@ app.post('/new', (req, res) => {
     title: req.body.title,
     description: req.body.description
   })
-  newThread.save()
-  // render new page after saving to collection
-  var context = {
-    title: 'Create New Thread',
-    subtitle: 'Thread Created!'
-  }
-  res.render('new-thread', context)
+  newThread.save(() => {
+    // render new page after saving to collection
+    var context = {
+      title: 'Create New Thread',
+      subtitle: 'Thread Created!'
+    }
+    res.render('new-thread', context)
+  })
+
 });
 /* ---------- end of /new ---------- */
 

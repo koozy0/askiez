@@ -28,6 +28,9 @@
         <div class="container">
           <h1 class="title">{{ title }}</h1>
           <h2 class="subtitle">{{ subtitle }}</h2>
+          {{#if username}}
+            <h3>by: {{ username }}</h2>
+          {{/if}}
         </div>
       </div>
     </section>
