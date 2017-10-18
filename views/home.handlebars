@@ -1,7 +1,10 @@
 {{#each threads}}
-<article class="message">
-  <a href="/thread/{{ this._id }}">
+<article class="message is-dark">
+  <a href="/thread/{{ this._id }}" style="text-decoration:none">
     <div class="message-header">
+      <p>by: {{ this.creator }}</p>
+    </div>
+    <div class="message-body">
       <p>{{ this.title }}</p>
     </div>
   </a>
