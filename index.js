@@ -64,9 +64,12 @@ app.post('/thread/:id', (req, res) => {
   }
   Thread.findById(threadIndex, (err, thread) => {
     thread.answer.push(newAnswer)
-    thread.save((thread) => {
+    thread.save(() => {
       var context = {
-        thread: thread
+        title: thread.title,
+        subtitle: thread.description,
+        username: thread.creator,
+        threads: thread
       }
       res.render('thread', context)
     })

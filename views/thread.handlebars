@@ -1,10 +1,10 @@
-{{#each thread.answer}}
+{{#each threads.answer}}
 <article class="message is-dark">
   <div class="message-header">
-    <p>{{ this }}</p>
+    <p>{{ this.creator }} </p>
   </div>
   <div class="message-body">
-    {{ this }}
+    {{ this.answer }}
   </div>
 </article>
 {{/each}}
