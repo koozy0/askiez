@@ -1,41 +1,53 @@
-// requires
-const express = require('express')
-const bodyParser = require('body-parser')
-const path = require('path')
-const exphbs  = require('express-handlebars')
-const MongoClient = require('mongodb').MongoClient
-const mongoose = require('mongoose')
+// setting all global variables
+const dbURL = 'mongodb://localhost/askiez'
+const port = 4000
+
+// installing all modules
+const express = require('express') // express
+const path = require('path') // for Public files
+const mongoose = require('mongoose') // mongoose
+const exphbs  = require('express-handlebars') // handlebars
+const bodyParser = require('body-parser') // for accessing POST request
+
+// models
 const User = require('./models/user')
 const Thread = require('./models/thread')
 
-const app = express();
-
-// connect to mongoose
-mongoose.connect('mongodb://localhost/askiez', {
-  useMongoClient: true
-})
-mongoose.Promise = global.Promise
+// initiating express
+const app = express()
 
 // view engine setup
 app.engine('handlebars', exphbs({defaultLayout: 'main'}))
 app.set('view engine', 'handlebars')
 
-// use bodyParser
+// static path setup
+app.use(express.static(path.join(__dirname, 'public')))
+
+// setup bodyParser
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
 }))
 
-// static path setup
-app.use(express.static(path.join(__dirname, 'public')))
+// Promise so we can use .then()
+mongoose.Promise = global.Promise
+// connect to mongodb via mongoose
+mongoose.connect(dbURL, {
+  useMongoClient: true
+})
+.then(
+  () => { console.log('Connected to database') },
+  (err) => { console.log(err) }
+)
 
 /* ---------- start of / ---------- */
-// home
+// GET
 app.get('/', (req, res) => {
-  Thread.find((err, data) => {
+  Thread.find().limit(10)
+  .then(restaurants => {
     var context = {
-      title: 'Threads',
-      threads: data
+      title: 'Askiez',
+      threads: restaurants
     }
     res.render('home', context)
   })
@@ -117,6 +129,6 @@ app.get('/login', (req, res) => {
 
 /* ---------- end of /login ---------- */
 
-app.listen(4000, () => {
-  console.log('server is running on port 4000')
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`)
 })
