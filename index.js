@@ -1,6 +1,6 @@
 // setting all global variables
-const dbURL = 'mongodb://localhost/askiez'
-const port = 4000
+const dbURL = process.env.MONGODB_URI|| 'mongodb://localhost/askiez'
+const port = process.env.PORT || 4000
 
 // installing all modules
 const express = require('express') // express
