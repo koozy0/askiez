@@ -44,12 +44,23 @@ mongoose.connect(dbURL, {
 // GET
 app.get('/', (req, res) => {
   Thread.find().limit(10)
-  .then(restaurants => {
-    var context = {
-      title: 'Askiez',
-      threads: restaurants
-    }
-    res.render('home', context)
+  .then(thread => {
+    render('home', req, res, thread)
+  })
+})
+// POST
+app.post('/', (req, res) => {
+  var threadId = req.body.id
+  var upvoteChange = Number(req.body.upvotes)
+  var downvoteChange = Number(req.body.downvotes)
+
+  // creating updateObj depending on upvote/downvote
+  if(upvoteChange > 0) var updateObj = {$inc: {upvotes: upvoteChange}}
+  else if(downvoteChange > 0) var updateObj = {$inc: {downvotes: downvoteChange}}
+
+  // find thread and update votes
+  Thread.findByIdAndUpdate(threadId, updateObj, (err, data) => {
+    if(err) console.log(err)
   })
 })
 /* ---------- end of / ---------- */
@@ -58,14 +69,8 @@ app.get('/', (req, res) => {
 // GET
 app.get('/thread/:id', (req, res) => {
   let threadIndex = req.params.id
-  Thread.findById(threadIndex, (err, data) => {
-    var context = {
-      title: data.title,
-      subtitle: data.description,
-      username: data.creator,
-      threads: data
-    }
-    res.render('thread', context)
+  Thread.findById(threadIndex, (err, thread) => {
+    render('thread', req, res, thread)
   })
 })
 // POST
@@ -77,13 +82,7 @@ app.post('/thread/:id', (req, res) => {
   Thread.findById(threadIndex, (err, thread) => {
     thread.answer.push(newAnswer)
     thread.save(() => {
-      var context = {
-        title: thread.title,
-        subtitle: thread.description,
-        username: thread.creator,
-        threads: thread
-      }
-      res.render('thread', context)
+      render('updateThread', req, res, thread)
     })
   })
 })
@@ -92,10 +91,7 @@ app.post('/thread/:id', (req, res) => {
 /* ---------- start of /new ---------- */
 // GET
 app.get('/new', (req, res) => {
-  var context = {
-    title: 'Create New Thread'
-  }
-  res.render('new-thread', context)
+  render('createThread', req, res)
 })
 // POST
 app.post('/new', (req, res) => {
@@ -104,13 +100,10 @@ app.post('/new', (req, res) => {
     title: req.body.title,
     description: req.body.description
   })
-  newThread.save(() => {
+  newThread.save()
+  .then(() => {
     // render new page after saving to collection
-    var context = {
-      title: 'Create New Thread',
-      subtitle: 'Thread Created!'
-    }
-    res.render('new-thread', context)
+    render('createdThread', req, res)
   })
 
 });
@@ -119,16 +112,99 @@ app.post('/new', (req, res) => {
 /* ---------- start of /login ---------- */
 // GET
 app.get('/login', (req, res) => {
-  var context = {
-    title: 'Login',
-    subtitle: 'or Register'
-  }
-  res.render('landing', context)
+  render('login', req, res)
 })
 // POST
+app.post('/login', (req,res) => {
 
+})
 /* ---------- end of /login ---------- */
+
+/* ---------- start of /register ---------- */
+// GET
+app.get('/register', (req, res) => {
+  render('register', req, res)
+})
+// POST
+app.post('/register', (req,res) => {
+  var newUser = new User({
+    email: req.body.email,
+    password: req.body.password
+  })
+  newUser.save()
+  .then(() => {
+    render('registered', req, res)
+  })
+
+})
+/* ---------- end of /register ---------- */
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`)
 })
+
+function render(page, req, res, data) {
+  var context = {}
+  switch (true) {
+    case (page === 'login'):
+      context = {
+        title: 'Login'
+      }
+      res.render('login', context)
+      break;
+    case (page === 'createdThread'):
+      context = {
+        title: 'Create New Thread',
+        subtitle: 'Thread Created!'
+      }
+      res.render('new-thread', context)
+      break;
+    case (page === 'createThread'):
+      context = {
+        title: 'Create New Thread'
+      }
+      res.render('new-thread', context)
+      break;
+    case (page === 'updateThread'):
+      context = {
+        title: data.title,
+        subtitle: data.description,
+        username: data.creator,
+        threads: data
+      }
+      res.render('thread', context)
+      break;
+    case (page === 'thread'):
+      context = {
+        title: data.title,
+        subtitle: data.description,
+        username: data.creator,
+        threads: data
+      }
+      res.render('thread', context)
+      break;
+    case (page === 'home'):
+      context = {
+        title: 'Askiez',
+        helpers: {
+            countVotes: function (upvotes, downvotes) { return upvotes - downvotes }
+        },
+        threads: data
+      }
+      res.render('home', context)
+      break;
+    case (page === 'register'):
+      context = {
+        title: 'Register'
+      }
+      res.render('register', context)
+      break;
+      case (page === 'registered'):
+        context = {
+          title: 'Register',
+          subtitle: 'New User Created'
+        }
+        res.render('register', context)
+        break;
+  }
+}

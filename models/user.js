@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require('bcrypt')
 
 // create a schema
 const userSchema = new Schema({
@@ -7,6 +8,16 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   threads: [ { type: String } ],
   answers: [ { type: String } ]
+})
+
+userSchema.pre('save', function(next) {
+  var user = this
+  //hash the password
+  bcrypt.hash(user.password, 10)
+  .then(hash => {
+    user.password = hash
+    next() // next() is calling the save()
+  })
 })
 
 const User = mongoose.model('User', userSchema, 'users')

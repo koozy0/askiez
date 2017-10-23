@@ -5,7 +5,22 @@
       <p>by: {{ this.creator }}</p>
     </div>
     <div class="message-body">
-      <p>{{ this.title }}</p>
+      <div class="columns">
+        <div class="column is-10">
+          {{ this.title }}
+        </div>
+        <div class="column is-narrow">
+          <p class="title votes">{{countVotes this.upvotes this.downvotes}}</p>
+        </div>
+        <div class="column is-narrow">
+          <button class="button up">
+            <i class="fa fa-arrow-up"></i>
+          </button>
+          <button class="button down">
+            <i class="fa fa-arrow-down"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </a>
 </article>
